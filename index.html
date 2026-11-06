@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VGU CS Graduation Planner</title>
+<style>
+:root{--bg:#f6f7f9;--fg:#1b1f27;--mut:#5d6675;--card:#fff;--bd:#dde1e8;--acc:#2f5fd0;--ok:#157a3d;--warn:#a85d00;--bad:#c4271f;--okb:#e5f5ea;--warnb:#fff1de;--badb:#fde8e6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151b;--fg:#e8ebf0;--mut:#9aa4b4;--card:#1a1f28;--bd:#2c3340;--acc:#7ea2ff;--ok:#5fd18a;--warn:#f0b05a;--bad:#ff8a80;--okb:#14301f;--warnb:#33270f;--badb:#3a1a18;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12151b;--fg:#e8ebf0;--mut:#9aa4b4;--card:#1a1f28;--bd:#2c3340;--acc:#7ea2ff;--ok:#5fd18a;--warn:#f0b05a;--bad:#ff8a80;--okb:#14301f;--warnb:#33270f;--badb:#3a1a18;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.5rem;margin:0 0 4px}h2{font-size:1.15rem;margin:0 0 10px}
+.sub{color:var(--mut);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+label{display:block;font-size:.8rem;color:var(--mut);margin-bottom:3px}
+input,select{width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
+input[type=checkbox]{width:auto}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.btn{padding:8px 12px;border:1px solid var(--bd);background:var(--bg);color:var(--fg);border-radius:20px;cursor:pointer;font:inherit}
+.btn.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.hint{font-size:.82rem;color:var(--mut);margin:6px 0 0}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--bd);vertical-align:top}
+th{color:var(--mut);font-weight:600;font-size:.8rem}
+td.d{white-space:nowrap;font-weight:600}
+.verdict{padding:12px 14px;border-radius:10px;font-weight:600;margin-bottom:12px}
+.ok{background:var(--okb);color:var(--ok)}.warn{background:var(--warnb);color:var(--warn)}.bad{background:var(--badb);color:var(--bad)}
+ul.w{list-style:none;padding:0;margin:0}
+ul.w li{padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:.92rem}
+.ph{font-weight:700;margin:14px 0 6px;color:var(--acc)}
+.it{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--bd)}
+.it input{margin-top:4px}.it .due{margin-left:auto;white-space:nowrap;color:var(--mut);font-size:.82rem;padding-left:8px}
+.it.done span.t{text-decoration:line-through;color:var(--mut)}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:6px 0 10px}.bar i{display:block;height:100%;background:var(--ok);width:0}
+.tag{font-size:.72rem;padding:2px 7px;border-radius:10px;background:var(--okb);color:var(--ok);white-space:nowrap}
+.tag.n{background:var(--badb);color:var(--bad)}
+.rules li{margin-bottom:4px}
+</style></head><body><main>
+<h1>🎓 VGU CS Graduation Planner</h1>
+<p class="sub">Internship → Thesis → Graduation. Based on the CSE info session (HCMC, 2026). Always confirm dates with the CSE Office (R.511, Cluster 3).</p>
+
+<section class="card"><h2>1. Your status</h2>
+<div class="grid">
+<div><label>ECTS completed now</label><input id="e1" type="number" min="0" max="210" value="120"></div>
+<div><label>ECTS expected by thesis registration (need 150)</label><input id="e2" type="number" min="0" max="210" value="150"></div>
+<div><label>ECTS expected at graduation (need 180)</label><input id="e3" type="number" min="0" max="210" value="180"></div>
+<div><label>Target graduation round</label><select id="tg"><option value="oct">October 2027 (defense ≤ 31 Aug 2027)</option><option value="apr">April 2028 (defense ≤ 20 Feb 2028)</option></select></div>
+<div><label>German requirement</label><label style="color:var(--fg);font-size:.9rem"><input id="ger" type="checkbox"> 4 German classes done or A2 certificate</label></div>
+</div></section>
+
+<section class="card"><h2>2. Pick a scenario (or edit dates yourself)</h2>
+<div class="btns" id="sc"></div>
+<p class="hint" id="scd"></p>
+<div class="grid" style="margin-top:12px">
+<div><label>Internship start</label><input id="s" type="date"></div>
+<div><label>Internship length (weeks, min 14)</label><input id="w" type="number" min="1" max="52"></div>
+<div><label>Thesis registration form submitted</label><input id="r" type="date"></div>
+<div><label>Approval wait (days, max 28)</label><input id="wt" type="number" min="1" max="60"></div>
+<div><label>Thesis report submitted</label><input id="sb" type="date"></div>
+<div><label>Oral defense date</label><input id="df" type="date"></div>
+</div></section>
+
+<section class="card"><h2>3. Your timeline</h2>
+<div class="verdict" id="vd"></div>
+<div class="wrap"><table><thead><tr><th>Milestone</th><th>Date</th><th>Notes</th></tr></thead><tbody id="tl"></tbody></table></div>
+<h2 style="margin-top:18px">Risk check</h2><ul class="w" id="wl"></ul></section>
+
+<section class="card"><h2>4. Step-by-step guide &amp; document tracker</h2>
+<div id="pt">0 / 0 done</div><div class="bar"><i id="pb"></i></div><div id="cl"></div>
+<p class="hint">Ticks are saved in this browser only.</p></section>
+
+<section class="card"><h2>5. Key rules at a glance</h2>
+<ul class="rules">
+<li><b>Internship:</b> 120 ECTS needed · ≥14 weeks, full-time (5 days × 8 h) · starts in SS2027 after Tet · grade = report 80% + presentation 20% · all documents in English.</li>
+<li><b>IC</b> (Internship Confirmation, signed and stamped) within the first 2 weeks. <b>IR + IE</b> (signed and stamped) have no deadline, but submit ASAP; the presentation is held only after IC, IE and IR (hard + soft copy) are in.</li>
+<li><b>Thesis:</b> 150 ECTS + proof of internship registration (IC) · 2 supervisors (1 from CSE, the other with ≥ Master’s degree) · approval ≤ 4 weeks · report due 9 weeks after approval · defense ≤ 1 month after submission.</li>
+<li><b>Late thesis report = fail.</b> The thesis with colloquium can only be repeated once. One extension (apply <i>before</i> the deadline, it moves only the report deadline). Title can change once, within the first 4 weeks.</li>
+<li>Internship presentation must be done <b>before</b> the oral defense. Defense is onsite (at least one supervisor onsite).</li>
+<li>Report formats: internship 20–35 pages, thesis 25–60 pages · 12 pt, single spacing, numbered pages · Turnitin similarity ≤ 15%. Thesis: 2 hard + 1 digital copy (may be submitted 1 week early).</li>
+<li><b>Graduation:</b> 180 ECTS + 4 German classes or A2 · assessments in April and October · one ceremony in November.</li>
+<li><b>Status fee:</b> thesis not submitted by 30 Nov 2027 (summer semester) or 31 May 2028 (winter semester) → fee for the next semester.</li>
+</ul></section>
+
+<section class="card"><h2>6. Official CSE thesis timeline</h2>
+<div class="wrap"><table><thead><tr><th>Last day to receive form</th><th>Topics issued</th><th>Report deadline</th><th>Latest defense</th><th>Makes</th></tr></thead><tbody id="ot"></tbody></table></div>
+<p class="hint">The slides label the rows “April 2026…”, but the dates are 2027–2028, so they are shown that way here.</p></section>
+
+<script>
+const D=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(Date.UTC(a,b-1,c))};
+const iso=d=>d.toISOString().slice(0,10);
+const add=(d,n)=>new Date(d.getTime()+n*864e5);
+const fmt=d=>d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});
+const CUT={oct:D('2027-08-31'),apr:D('2028-02-20')};
+const $=i=>document.getElementById(i);
+const SC={
+earliest:['Earliest','Start right after Tet, register the thesis a week in, submit 1 week before the deadline, defend soon after. Internship and thesis overlap.'],
+latest:['Latest (safe)','Latest start that still makes your target round, assuming the worst case of a 4-week approval wait. Submit on the deadline day.'],
+easiest:['Easiest','Finish the internship first, then do the thesis with buffers. Often lands in the April 2028 round.'],
+cramped:['Most cramped','Absolute latest start that still makes the target, assuming a fast 7-day approval, zero slack and heavy overlap.'],
+custom:['Custom','Edit any date below.']};
+let cur='earliest';
+function preset(k){
+ const C=CUT[$('tg').value];let s,w=14,wt,r,sub,df;
+ if(k==='earliest'||k==='easiest'){
+  s=D('2027-02-22');const end=add(s,98);
+  if(k==='earliest'){r=add(s,7);wt=7;sub=add(add(r,wt+63),-7);df=add(sub,7);const m=add(end,14);if(df<m)df=m}
+  else{r=add(end,7);wt=14;sub=add(add(r,wt+63),-7);df=add(sub,14)}
+ }else{
+  wt=k==='latest'?28:7;df=C;sub=add(C,-28);r=add(sub,-63-wt);s=add(r,-14);
+ }
+ $('s').value=iso(s);$('w').value=w;$('r').value=iso(r);$('wt').value=wt;$('sb').value=iso(sub);$('df').value=iso(df);
+}
+function pick(k){cur=k;if(k!=='custom')preset(k);draw()}
+function buildBtns(){$('sc').innerHTML=Object.keys(SC).map(k=>`<button class="btn${k===cur?' on':''}" data-k="${k}">${SC[k][0]}</button>`).join('');
+ document.querySelectorAll('#sc .btn').forEach(b=>b.onclick=()=>pick(b.dataset.k));$('scd').textContent=SC[cur][1]}
+function calc(){
+ const s=D($('s').value),w=+$('w').value,r=D($('r').value),wt=+$('wt').value,sb=D($('sb').value),df=D($('df').value);
+ const end=add(s,w*7),ic=add(s,14),ap=add(r,wt),dl=add(ap,63),es=add(dl,-7),dlat=add(sb,28),pres=add(end,14);
+ return{s,w,r,wt,sb,df,end,ic,ap,dl,es,dlat,pres}
+}
+let T=null;
+function draw(){
+ buildBtns();
+ if(!$('s').value||!$('r').value||!$('sb').value||!$('df').value){return}
+ const t=T=calc(),W=[];const add_=(c,m)=>W.push([c,m]);
+ const e1=+$('e1').value,e2=+$('e2').value,e3=+$('e3').value,C=CUT[$('tg').value];
+ const round=t.df<=CUT.oct?'October 2027':t.df<=CUT.apr?'April 2028':null;
+ const v=$('vd');
+ if(round){const ok=t.df<=C;v.className='verdict '+(ok?'ok':'warn');v.textContent=ok?`✅ This plan makes the ${round} graduation list (defense ${fmt(t.df)}).`:`⚠️ This plan makes the ${round} list, not your target (${$('tg').value==='oct'?'October 2027':'April 2028'}).`}
+ else{v.className='verdict bad';v.textContent='❌ Defense is after 20 Feb 2028, so you miss both the October 2027 and April 2028 lists.'}
+ const row=(a,b,c)=>`<tr><td>${a}</td><td class="d">${b}</td><td>${c||''}</td></tr>`;
+ $('tl').innerHTML=[
+ row('Internship starts',fmt(t.s),'SS2027, after Tet'),
+ row('Submit IC (latest)',fmt(t.ic),'Within 2 weeks of starting; signed and stamped'),
+ row('Thesis registration form',fmt(t.r),'Typed, handwritten signatures, hard file at CSE'),
+ row('Thesis approved / topic issued',fmt(t.ap),`${t.wt}-day wait (max 28)`),
+ row('Internship ends (min 14 wks)',fmt(t.end),`${t.w} weeks full-time`),
+ row('Internship presentation (est.)',fmt(t.pres),'Assumed ~2 weeks after the end; set once IC + IE + IR are in'),
+ row('Thesis report deadline',fmt(t.dl),'9 weeks after approval; late = fail'),
+ row('Your planned submission',fmt(t.sb),`${Math.round((t.dl-t.sb)/864e5)} days before the deadline`),
+ row('Oral defense registration window',`${fmt(add(t.df,-5))} – ${fmt(add(t.df,-3))}`,'Online form, 3–5 days before the defense'),
+ row('Your planned oral defense',fmt(t.df),`Latest allowed: ${fmt(t.dlat)}`),
+ row('Graduation assessment',round||'—','Ceremony in November')].join('');
+ if(e1<120)add_('bad',`You have ${e1} ECTS: you need 120 ECTS before the internship can start.`);else add_('ok','120 ECTS prerequisite for the internship is met.');
+ if(e2<150)add_('bad',`Thesis registration needs 150 ECTS (you entered ${e2}).`);
+ if(e3<180)add_('bad',`Graduation needs 180 ECTS (you entered ${e3}).`);
+ if(!$('ger').checked)add_('warn','German: complete 4 German classes or submit an A2 certificate before graduating.');
+ if(t.w<14)add_('bad','Internship must last at least 14 weeks.');
+ if(t.s<D('2027-02-15'))add_('warn','Internship should start in SS2027 after Tet (about 6 Feb 2027).');
+ if(t.r<t.s)add_('bad','Thesis registration needs proof of internship registration (IC), so register after the internship starts.');
+ else if(t.r<t.ic)add_('warn','Make sure the signed IC is submitted before you register the thesis.');
+ if(t.wt>28)add_('bad','Approval can take 4 weeks at most; check your wait estimate.');
+ if(t.sb>t.dl)add_('bad',`Report planned after the deadline (${fmt(t.dl)}). Late reports FAIL. Apply for the one-time extension before the deadline.`);
+ else if(t.sb.getTime()===t.dl.getTime())add_('warn','You submit on the deadline day with zero buffer. Aim for the “1 week early” option.');
+ if(t.df<t.sb)add_('bad','The defense cannot be before the report submission.');
+ if(t.df>t.dlat)add_('bad',`Defense must be within 1 month of submission (latest ${fmt(t.dlat)}).`);
+ if(t.pres>t.df)add_('bad','The internship presentation must happen before the oral defense; finish the internship earlier or move the defense.');
+ if(round&&t.df>C)add_('bad','The defense is after the cutoff for your target round.');
+ const m=t.r.getUTCMonth()+1,y=t.r.getUTCFullYear(),summer=m>=3&&m<=9;
+ const sf=summer?D(y+'-11-30'):(m>=10?D((y+1)+'-05-31'):D(y+'-05-31'));
+ if(t.sb>sf)add_('bad',`Report after ${fmt(sf)}: status fee for the next semester.`);else add_('ok',`Report is before the status-fee date (${fmt(sf)}, ${summer?'summer':'winter'}-semester thesis).`);
+ if(!W.some(x=>x[0]!=='ok'))add_('ok','No blocking issues found. Still confirm everything with the CSE Office.');
+ $('wl').innerHTML=W.map(x=>`<li class="${x[0]}">${x[0]==='bad'?'❌':x[0]==='warn'?'⚠️':'✅'} ${x[1]}</li>`).join('');
+ cl();
+}
+const ITEMS=[
+['Internship',[
+['Reach 120 ECTS',null],['Find a full-time position (5 days × 8 h, ≥14 weeks)',s=>s.s],
+['Get the Internship Confirmation form signed and stamped; list position, tasks, schedule','ic'],
+['Submit IC to the CSE Office (R.511, Cluster 3)','ic'],['Complete the internship (≥14 weeks)','end'],
+['Get the Internship Evaluation (IE) from the company, signed and stamped','end'],
+['Write the Internship Report: 20–35 pages, Turnitin ≤15%, numbered figures, TOC, abstract, references','end'],
+['Submit IC + IE + IR (hard + soft copy), signed and stamped','end'],['Internship presentation (before the thesis defense)','pres']]],
+['Thesis',[
+['150 ECTS + proof of IC in hand','r'],['Find 2 supervisors (1 from CSE; the other ≥ Master’s)','r'],
+['Agree a topic (optional ≤5-sentence description)','r'],['Submit the Bachelor Thesis Registration Form (typed, handwritten signatures, hard file)','r'],
+['Approval received (max 4 weeks)','ap'],['Optional: change title (once, within first 4 weeks); extension (once, before the deadline)',null],
+['Write the thesis: 25–60 pages, official template, Turnitin ≤15%','sb'],['Submit 2 hard copies + 1 digital copy (can be 1 week early)','sb'],
+['Register for the oral defense online (3–5 days before)','dreg'],['Oral defense onsite, with both supervisors (at least one onsite)','df'],
+['Receive the thesis result from the CSE Office',null]]],
+['Graduation',[
+['All modules passed (180 ECTS)',null],['4 German classes or A2 certificate',null],
+['Defense completed before the cutoff (31 Aug 2027 / 20 Feb 2028)','cut'],['Attend the graduation ceremony in November',null]]]];
+function due(k){if(!T||!k)return'';const m={ic:T.ic,end:T.end,pres:T.pres,r:T.r,ap:T.ap,sb:T.sb,df:T.df,dreg:add(T.df,-5),cut:CUT[$('tg').value]};
+ const d=typeof k==='function'?k(T):m[k];return d?fmt(d):''}
+let saved={};try{saved=JSON.parse(localStorage.getItem('vgu-cl')||'{}')}catch(e){}
+function cl(){let n=0,done=0,h='';
+ ITEMS.forEach((g,gi)=>{h+=`<div class="ph">${g[0]}</div>`;g[1].forEach((it,i)=>{const id=gi+'-'+i,c=!!saved[id];n++;if(c)done++;
+  h+=`<div class="it${c?' done':''}"><input type="checkbox" data-id="${id}"${c?' checked':''}><span class="t">${it[0]}</span><span class="due">${due(it[1])}</span></div>`})});
+ $('cl').innerHTML=h;$('pt').textContent=`${done} / ${n} done`;$('pb').style.width=(done/n*100)+'%';
+ document.querySelectorAll('#cl input').forEach(x=>x.onchange=()=>{saved[x.dataset.id]=x.checked;try{localStorage.setItem('vgu-cl',JSON.stringify(saved))}catch(e){}cl()})}
+function ot(){const R=['2027-03-16','2027-04-13','2027-05-18','2027-06-22','2027-07-27','2027-08-31','2027-09-28','2027-10-26','2027-11-30','2027-12-28','2028-01-25','2028-02-29'];
+ $('ot').innerHTML=R.map(x=>{const a=D(x),i=add(a,7),s=add(i,63),d=add(s,28);const t=d<=CUT.oct?'<span class="tag">Oct 2027</span>':d<=CUT.apr?'<span class="tag">Apr 2028</span>':'<span class="tag n">After Apr 2028</span>';
+ return`<tr><td>${fmt(a)}</td><td>${fmt(i)}</td><td>${fmt(s)}</td><td>${fmt(d)}</td><td>${t}</td></tr>`}).join('')}
+['e1','e2','e3','ger'].forEach(i=>$(i).oninput=draw);
+$('tg').onchange=()=>{if(cur!=='custom')preset(cur);draw()};
+['s','w','r','wt','sb','df'].forEach(i=>$(i).oninput=()=>{cur='custom';draw()});
+ot();preset('earliest');draw();
+</script></main></body></html>
