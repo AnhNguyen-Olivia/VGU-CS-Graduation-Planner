@@ -111,6 +111,12 @@ input[type=checkbox]{height:16px}
 <p>Plan your internship, thesis and graduation dates, check your risks, and track every document. Based on the CSE info session (HCMC, 2026). Always confirm dates with the CSE Office (R.511, Cluster 3).</p>
 <div class="steps"><span>① Internship</span><span>② Thesis</span><span>③ Graduation</span></div></header>
 
+<section class="card"><h2>Quick estimate: when will I finish?</h2>
+<div class="grid" style="max-width:540px;margin-bottom:16px"><div><label>Internship start date</label><input id="xs" type="date"></div><div><label>Internship length (weeks, min 14)</label><input id="xw" type="number" min="1" max="52"></div></div>
+<div class="wrap"><table><thead><tr><th>Expected milestone</th><th>Fastest</th><th>Typical</th><th>Slowest</th></tr></thead><tbody id="et"></tbody></table></div>
+<p class="hint" id="eh"></p>
+<p class="hint"><b>Fastest</b>: register the thesis 1 week after you start, 7-day approval, submit 1 week early, defend 1 week later. <b>Typical</b>: register after the internship ends, 14-day approval, submit 1 week early, defend 2 weeks later. <b>Slowest</b>: register after the internship ends, 28-day approval, submit on the deadline day, defend at the 4-week limit. Changing the start date or length here also updates the planner below.</p></section>
+
 <section class="card"><h2>1. Your status</h2>
 <div class="grid">
 <div><label>ECTS completed now</label><input id="e1" type="number" min="0" max="210" value="120"></div>
@@ -185,6 +191,18 @@ function preset(k){
 function pick(k){cur=k;if(k!=='custom')preset(k);draw()}
 function buildBtns(){$('sc').innerHTML=Object.keys(SC).map(k=>`<button class="btn${k===cur?' on':''}" data-k="${k}">${SC[k][0]}</button>`).join('');
  document.querySelectorAll('#sc .btn').forEach(b=>b.onclick=()=>pick(b.dataset.k));$('scd').textContent=SC[cur][1]}
+function est(){
+ const sv=$('s').value,xs=$('xs'),xw=$('xw');
+ if(document.activeElement!==xs)xs.value=sv;if(document.activeElement!==xw)xw.value=$('w').value;
+ if(!sv){$('et').innerHTML='';return}
+ const s=D(sv),w=+$('w').value||14,end=add(s,w*7),ic=add(s,14),pres=add(end,14);
+ const P=[{r:add(s,7),wt:7,e:7,g:7,f:1},{r:add(end,7),wt:14,e:7,g:14},{r:end,wt:28,e:0,g:28}].map(p=>{p.ap=add(p.r,p.wt);p.dl=add(p.ap,63);p.sb=add(p.dl,-p.e);p.df=add(p.sb,p.g);if(p.f&&p.df<pres)p.df=pres;return p});
+ const sh=(a,b)=>`<tr><td>${a}</td><td class="d" colspan="3">${b}</td></tr>`;
+ const pr=(a,k)=>`<tr><td>${a}</td>${P.map(p=>`<td class="d">${fmt(p[k])}</td>`).join('')}</tr>`;
+ const rd=d=>d<=CUT.oct?'<span class="tag">Oct 2027</span>':d<=CUT.apr?'<span class="tag">Apr 2028</span>':'<span class="tag n">After Apr 2028</span>';
+ $('et').innerHTML=sh('Internship starts',fmt(s))+sh('Submit IC by (within 2 weeks)',fmt(ic))+sh(`Internship complete (${w} weeks)`,fmt(end))+sh('Internship presentation (est.)',fmt(pres))+pr('Thesis registration','r')+pr('Thesis approved','ap')+pr('Report deadline (9 weeks)','dl')+pr('Report submitted','sb')+pr('Oral defense','df')+`<tr><td>Graduation round</td>${P.map(p=>`<td>${rd(p.df)}</td>`).join('')}</tr>`;
+ $('eh').textContent=s<D('2027-02-15')?'Note: the internship should start in SS2027, after Tet (about 6 Feb 2027). Check with the CSE Office before starting earlier.':'';
+}
 function calc(){
  const s=D($('s').value),w=+$('w').value,r=D($('r').value),wt=+$('wt').value,sb=D($('sb').value),df=D($('df').value);
  const end=add(s,w*7),ic=add(s,14),ap=add(r,wt),dl=add(ap,63),es=add(dl,-7),dlat=add(sb,28),pres=add(end,14);
@@ -192,7 +210,7 @@ function calc(){
 }
 let T=null;
 function draw(){
- buildBtns();
+ buildBtns();est();
  if(!$('s').value||!$('r').value||!$('sb').value||!$('df').value){return}
  const t=T=calc(),W=[];const add_=(c,m)=>W.push([c,m]);
  const e1=+$('e1').value,e2=+$('e2').value,e3=+$('e3').value,C=CUT[$('tg').value];
@@ -269,5 +287,7 @@ $('tg').onchange=()=>{if(cur!=='custom')preset(cur);draw()};
 ['s','w','r','wt','sb','df'].forEach(i=>$(i).oninput=()=>{cur='custom';draw()});
 try{const th=localStorage.getItem('vgu-th');if(th)document.documentElement.dataset.theme=th}catch(e){}
 $('tgl').onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches,n=d?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('vgu-th',n)}catch(e){}};
+$('xs').oninput=()=>{$('s').value=$('xs').value;cur='custom';draw()};
+$('xw').oninput=()=>{$('w').value=$('xw').value;cur='custom';draw()};
 ot();preset('earliest');draw();
 </script></main></body></html>
